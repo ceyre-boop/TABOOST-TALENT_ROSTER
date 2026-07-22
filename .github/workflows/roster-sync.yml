@@ -1,0 +1,24 @@
+name: Roster Sync
+on:
+  schedule:
+    - cron: '0 17 * * *'   # daily 10 AM PT (17:00 UTC)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch and transform roster
+        run: python3 scripts/transform_roster.py
+      - name: Commit if changed
+        run: |
+          git config user.name "roster-sync-bot"
+          git config user.email "actions@github.com"
+          git add data/roster.csv
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "Auto-sync: roster sales levels"
+          git push
