@@ -1,48 +1,48 @@
-Full Name,Email,Category,Live,Mom,Rate,Sales Level,IG Account,TikTok Account,Additional TikTok Accounts,
-Sylvia Van Hoeven,sylvia@taboost.me,"Beauty, Fashion",FALSE,FALSE,High,L4,sylviavanhoeven,sylviavanhoevenbeauty,sylviavanhoeven,
-Sam Jones,samjones@taboost.me,"Home, Beauty, Lifestyle",FALSE,FALSE,High,L5,its_samjones_,sam_joness_,samjones_2,
-Brittanie Hammer,bestiebriitt@taboost.me,"Home, Tech, Beauty",FALSE,FALSE,High,L5,,bestiebriitt,brittaniehammershop,
-Colleen Fusco,colleen@taboost.me,Beauty,FALSE,FALSE,High,L4,colleenbfusco,colleen_fusco,,
-Anastasiya Ray,anastasiya@taboost.me,Beauty,FALSE,FALSE,High,N/A,ugcbyanastasiya,theraysfinds ,anastasiya_ray,thisblondieee
-Allee Baray,allee@taboost.me,"Fashion, Shoes, Family",FALSE,FALSE,High,L5,,ababyandabulldog,shopaholicallee,shopaholicallee2
-Angela Callisto,angela@taboost.me,"Fashion, Beauty",FALSE,FALSE,High,L4,angelacallisto,angelacallisto123,,
-Lizz Freixas,lizz@taboost.me,"Fashion, Beauty",FALSE,FALSE,High,L6,,lizzmi45,,
-Jocelyn Chardon,jocelyn@taboost.me,"Fashion, Beauty",FALSE,FALSE,High,L4,ohsoitsjocelyn,ohsoitsjocelyn,ohsoitsjocelynbeauty,
-Alissa Butt,alissa@taboost.me,"Fitness, Lifestyle, Fashion",FALSE,FALSE,High,N/A,alissaabutt,itsalissabutt,,
-Alana Calviello,alana@taboost.me,Fashion + Wellness,FALSE,FALSE,High,L5,alanacalviello,_alanacalvs,,
-Grayson Finks,grayson@taboost.me,Fashion,FALSE,FALSE,High,L2,,grayson.finks,,
-Brittany Kuhl,bkuhl@taboost.me,"Beauty, Fashion, Tech",FALSE,FALSE,High,L4,,bkewwwl1507,,
-Jenn Lyles,jenn@taboost.me,Fashion,FALSE,FALSE,High,L5,,jenn_lyles,,
-Stephanie Stimson,stephanie@taboost.me,Beauty,FALSE,FALSE,High,L4,stephaniestimson_,stephanie_stimson,,
-Hana Tanaka,hana@taboost.me,"Beauty, Fashion",FALSE,FALSE,High,L4,hanaisfinechina,hanaisfinechina,hanasfaves,
-Wesley Barker,wesley@taboost.me,"Fashion, Beauty",FALSE,FALSE,High,L4,wesleyrbarker,wesleyrbarker,,
-Mahogany Lox,mahogany@taboost.me,"Fashion, Beauty",FALSE,FALSE,High,L1,mahoganylox,mahoganylox,,
-Sasha Keehn,,"Beauty, Fashion, Lifestyle",FALSE,FALSE,High,L3,sashamariekeehn,sashamarielovesshopping,,
-Lydia Aulozzi,,Lifestyle ,FALSE,FALSE,High,L3,lydiaaulozzi_,lydiaaulozzi_,,
-Abbey Kline,,Beauty,FALSE,FALSE,Medium,L5,,abbey.kline,only_cups,
-Alia Farrell,,"Fashion, Home, Beauty",FALSE,FALSE,Medium,L4,,pinspo.girl,,
-Ashley Nagy,,"Fashion, Home, Beauty",FALSE,FALSE,Medium,L5,,ashleyorganic,ashleyorganicedits,
-Ashley Will,,Fashion,FALSE,FALSE,Medium,L3,,theashleywill,,
-Audur Banks,,Beauty,FALSE,TRUE,Medium,L2,,thatnordicblonde,everydayaudur,
-Brandie Barron,,Fashion,FALSE,TRUE,Medium,L4,,brandie1234,,
-Brandie Hayes,,Fashion,FALSE,TRUE,Medium,L5,,brandienicole27,,
-Breanna Nguyen,,"Beauty, Tech",FALSE,FALSE,Medium,L2,,brehyah,,
-Chelsea Becker,,"Beauty, Home, Health",FALSE,FALSE,Medium,L4,,chelsleebmoney,only_supps,
-Haley Alzona,,"Beauty, Fashion, Health",FALSE,FALSE,Medium,L6,,hkapproved,honeyquiche,
-Jessica Niedzwiecki,,"Fashion, Home",TRUE,FALSE,Medium,L5,,justjessyxo,petitewithjessy,
-Karina Michelle Cruz,,Beauty,TRUE,FALSE,Medium,L4,,_karina.michelle,,
-Kate Tsakiris,,"Beauty, Health",FALSE,FALSE,Medium,L5,,kategrauss,kategrs,
-Kristina Dunn,,Fashion,FALSE,FALSE,Medium,L5,,kristinadunnn,kristinanicoletall,
-Ksenia Senn,,Beauty,FALSE,FALSE,Medium,L2,,kseniasenn,,
-Kylika Miller,,Fashion,FALSE,FALSE,Medium,L4,,kylikamiller44,kindafitky,
-Lesette Barhite,,"Fashion, Beauty",FALSE,FALSE,Medium,L4,,lesettey,,
-Lynda Truong,,Beauty,FALSE,FALSE,Medium,L4,,lyndatrann,,
-Michaela Scott,,Beauty,FALSE,FALSE,Medium,L3,,michaelascott20,,
-Michelle Cudwadie,,Beauty,TRUE,FALSE,Medium,L4,,michelledemoda,,
-Natalie Khalil,,Beauty,FALSE,FALSE,Medium,L4,,nataleezyy,nataleezyyirl,
-Nicole Bacharach,,,FALSE,FALSE,Medium,L5,,ragdollmanor,,
-Peyton Black,,Beauty,FALSE,FALSE,Medium,L3,,peytonxblack,peytonxshops,
-Sade Goodman,,Beauty,FALSE,FALSE,Medium,L5,,shilohstemple,,
-Sijia Yu,,Beauty,FALSE,FALSE,Medium,L1,,becsreview,,
-Vanessa Anaya,,Fashion,FALSE,FALSE,Medium,L5,,vanessaanaya30,,
-Skyler Clark,skyler@taboost.me,"Music, Tech",FALSE,FALSE,Open,N/A,,skylerclarkk,,
+Full Name,TikTok Handle,Categories,Rate,,,Sales Level
+Sylvia Van Hoeven,sylviavanhoevenbeauty,"Beauty, Fashion",High,,,L4
+Sam Jones,sam_joness_,"Home, Beauty, Lifestyle",High,,,L5
+Brittanie Hammer,bestiebriitt,"Home, Tech, Beauty",High,,,L5
+Colleen Fusco,colleen_fusco,Beauty,High,,,L4
+Anastasiya Ray,theraysfinds,Beauty,High,,,
+Allee Baray,ababyandabulldog,"Fashion, Shoes, Family",High,,,L5
+Angela Callisto,angelacallisto123,"Fashion, Beauty",High,,,L4
+Lizz Freixas,lizzmi45,"Fashion, Beauty",High,,,L6
+Jocelyn Chardon,ohsoitsjocelyn,"Fashion, Beauty",High,,,L4
+Alissa Butt,itsalissabutt,"Fitness, Lifestyle, Fashion",High,,,
+Alana Calviello,_alanacalvs,Fashion + Wellness,High,,,L5
+Grayson Finks,grayson.finks,Fashion,High,,,L2
+Brittany Kuhl,bkewwwl1507,"Beauty, Fashion, Tech",High,,,L4
+Jenn Lyles,jenn_lyles,Fashion,High,,,L5
+Stephanie Stimson,stephanie_stimson,Beauty,High,,,L4
+Hana Tanaka,hanaisfinechina,"Beauty, Fashion",High,,,L4
+Wesley Barker,wesleyrbarker,"Fashion, Beauty",High,,,L4
+Mahogany Lox,mahoganylox,"Fashion, Beauty",High,,,L1
+Sasha Keehn,sashamarielovesshopping,"Beauty, Fashion, Lifestyle",High,,,L3
+Lydia Aulozzi,lydiaaulozzi_,Lifestyle,High,,,L3
+Abbey Kline,abbey.kline,Beauty,Medium,,,L5
+Alia Farrell,pinspo.girl,"Fashion, Home, Beauty",Medium,,,L4
+Ashley Nagy,ashleyorganic,"Fashion, Home, Beauty",Medium,,,L5
+Ashley Will,theashleywill,Fashion,Medium,,,L3
+Audur Banks,thatnordicblonde,Beauty,Medium,,,L2
+Brandie Barron,brandie1234,Fashion,Medium,,,L4
+Brandie Hayes,brandienicole27,Fashion,Medium,,,L5
+Breanna Nguyen,brehyah,"Beauty, Tech",Medium,,,L2
+Chelsea Becker,chelsleebmoney,"Beauty, Home, Health",Medium,,,L4
+Haley Alzona,hkapproved,"Beauty, Fashion, Health",Medium,,,L6
+Jessica Niedzwiecki,justjessyxo,"Fashion, Home",Medium,,,L5
+Karina Michelle Cruz,_karina.michelle,Beauty,Medium,,,L4
+Kate Tsakiris,kategrauss,"Beauty, Health",Medium,,,L5
+Kristina Dunn,kristinadunnn,Fashion,Medium,,,L5
+Ksenia Senn,kseniasenn,Beauty,Medium,,,L2
+Kylika Miller,kylikamiller44,Fashion,Medium,,,L4
+Lesette Barhite,lesettey,"Fashion, Beauty",Medium,,,L4
+Lynda Truong,lyndatrann,Beauty,Medium,,,L4
+Michaela Scott,michaelascott20,Beauty,Medium,,,L3
+Michelle Cudwadie,michelledemoda,Beauty,Medium,,,L4
+Natalie Khalil,nataleezyy,Beauty,Medium,,,L4
+Nicole Bacharach,ragdollmanor,,Medium,,,L5
+Peyton Black,peytonxblack,Beauty,Medium,,,L3
+Sade Goodman,shilohstemple,Beauty,Medium,,,L5
+Sijia Yu,becsreview,Beauty,Medium,,,L1
+Vanessa Anaya,vanessaanaya30,Fashion,Medium,,,L5
+Skyler Clark,skylerclarkk,"Music, Tech",Open,,,
