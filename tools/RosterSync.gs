@@ -1,68 +1,52 @@
 // ============================================================================
-// TABOOST ROSTER SYNC - pushes the roster tab to the TALENT ROSTER repo
-// Google Sheets -> github.com/ceyre-boop/TABOOST-TALENT_ROSTER -> data/roster.csv
-// The live roster page reads column G (Sales Level) and shows a badge per box.
+// TABOOST ROSTER SYNC - Roster tab -> ceyre-boop/TABOOST-TALENT_ROSTER
+// Pushes ONLY the "Roster" tab (20 creators, column G = Sales Level)
+// to data/roster.csv. The live roster page reads column G and shows a
+// Sales Level badge on each creator box, matched by TikTok handle or name.
+// Paste into Apps Script on the ROSTER spreadsheet (not the live-hosts one).
 // ============================================================================
 
-// If your roster tab has a specific name, put it here and it wins.
-// Leave as '' to auto-detect (tries the candidates, else uses the first tab).
-var ROSTER_TAB = '';
-var ROSTER_TAB_CANDIDATES = ['Roster', 'Current', 'Creators', 'Talent', 'Sheet1'];
+var ROSTER_TAB = 'Roster';
 var ROSTER_OUTPUT_PATH = 'data/roster.csv';
 
+// -- MAIN SYNC ---------------------------------------------------------------
 function syncRosterToGitHub() {
-  var config = loadRosterConfig();
-  var sheet = findRosterSheet();
-  console.log('Using tab: "' + sheet.getName() + '"');
+  var config = loadRosterConfig_();
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(ROSTER_TAB);
+  if (!sheet) {
+    throw new Error('Tab "' + ROSTER_TAB + '" not found. Tabs in this spreadsheet: ' +
+      ss.getSheets().map(function(s) { return s.getName(); }).join(', '));
+  }
 
-  var csv = exportRosterCSV(config.SHEET_ID, sheet.getSheetId().toString());
-  console.log('Exported ' + csv.length + ' chars');
+  Logger.log('Using tab: "' + sheet.getName() + '"');
+  var csv = exportRosterCSV_(config.SHEET_ID, sheet.getSheetId().toString());
+  Logger.log('Exported ' + csv.length + ' chars');
 
-  var result = pushRosterToGitHub(csv, config);
-  console.log('Pushed to ' + ROSTER_OUTPUT_PATH + ' @ ' + result.commit.sha.substring(0, 7));
+  var result = pushRosterToGitHub_(csv, config);
+  Logger.log('Pushed to ' + ROSTER_OUTPUT_PATH + ' @ ' + result.commit.sha.substring(0, 7));
   return result;
 }
 
 function testRosterSync() { return syncRosterToGitHub(); }
 
-function findRosterSheet() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  if (ROSTER_TAB) {
-    var named = ss.getSheetByName(ROSTER_TAB);
-    if (!named) {
-      throw new Error('Sheet "' + ROSTER_TAB + '" not found. Tabs: ' +
-        ss.getSheets().map(function(x) { return x.getName(); }).join(', '));
-    }
-    return named;
-  }
-  for (var i = 0; i < ROSTER_TAB_CANDIDATES.length; i++) {
-    var s = ss.getSheetByName(ROSTER_TAB_CANDIDATES[i]);
-    if (s) return s;
-  }
-  return ss.getSheets()[0];
-}
-
-function listTabs() {
-  SpreadsheetApp.getActiveSpreadsheet().getSheets().forEach(function(s) {
-    console.log('"' + s.getName() + '"');
+// -- EXPORT CSV --------------------------------------------------------------
+function exportRosterCSV_(sheetId, gid) {
+  var url = 'https://docs.google.com/spreadsheets/d/' + sheetId +
+            '/export?format=csv&gid=' + gid + '&t=' + new Date().getTime();
+  var response = UrlFetchApp.fetch(url, {
+    headers: { 'Authorization': 'Bearer ' + ScriptApp.getOAuthToken() },
+    muteHttpExceptions: true
   });
-}
-
-function exportRosterCSV(sheetId, gid) {
-  var retries = 3;
-  for (var i = 0; i < retries; i++) {
-    var url = 'https://docs.google.com/spreadsheets/d/' + sheetId + '/export?format=csv&gid=' + gid;
-    var response = UrlFetchApp.fetch(url, {
-      headers: { 'Authorization': 'Bearer ' + ScriptApp.getOAuthToken() },
-      muteHttpExceptions: true
-    });
-    if (response.getResponseCode() === 200) return response.getContentText();
-    Utilities.sleep(3000 * (i + 1));
+  if (response.getResponseCode() !== 200) {
+    throw new Error('Export failed (HTTP ' + response.getResponseCode() + '): ' +
+      response.getContentText().substring(0, 200));
   }
-  throw new Error('Export failed after retries: rate limited by Google');
+  return response.getContentText();
 }
 
-function pushRosterToGitHub(content, config) {
+// -- GITHUB PUSH -------------------------------------------------------------
+function pushRosterToGitHub_(content, config) {
   if (!config.GITHUB_TOKEN) throw new Error('No GitHub token - run setupRosterSync() first');
   var apiUrl = 'https://api.github.com/repos/' + config.GITHUB_OWNER + '/' +
                config.GITHUB_REPO + '/contents/' + ROSTER_OUTPUT_PATH;
@@ -76,11 +60,13 @@ function pushRosterToGitHub(content, config) {
     },
     muteHttpExceptions: true
   });
-  if (check.getResponseCode() === 200) sha = JSON.parse(check.getContentText()).sha;
+  if (check.getResponseCode() === 200) {
+    sha = JSON.parse(check.getContentText()).sha;
+  }
 
   var payload = {
-    message: 'Auto-sync: roster @ ' + new Date().toISOString(),
-    content: Utilities.base64Encode(content),
+    message: 'Auto-sync: Roster @ ' + new Date().toISOString(),
+    content: Utilities.base64Encode(content, Utilities.Charset.UTF_8),
     branch: 'main'
   };
   if (sha) payload.sha = sha;
@@ -98,18 +84,19 @@ function pushRosterToGitHub(content, config) {
 
   var code = upload.getResponseCode();
   if (code !== 200 && code !== 201) {
-    throw new Error('GitHub error ' + code + ': ' + upload.getContentText());
+    throw new Error('GitHub PUT error ' + code + ': ' + upload.getContentText().substring(0, 300));
   }
   return JSON.parse(upload.getContentText());
 }
 
-function loadRosterConfig() {
+// -- CONFIG ------------------------------------------------------------------
+function loadRosterConfig_() {
   var props = PropertiesService.getScriptProperties();
   return {
     GITHUB_TOKEN: props.getProperty('ROSTER_GITHUB_TOKEN') || props.getProperty('GITHUB_TOKEN'),
     GITHUB_OWNER: 'ceyre-boop',
     GITHUB_REPO: 'TABOOST-TALENT_ROSTER',
-    SHEET_ID: props.getProperty('SHEET_ID') || SpreadsheetApp.getActiveSpreadsheet().getId()
+    SHEET_ID: SpreadsheetApp.getActiveSpreadsheet().getId()
   };
 }
 
@@ -118,42 +105,50 @@ function setupRosterSync() {
   var props = PropertiesService.getScriptProperties();
 
   if (!props.getProperty('GITHUB_TOKEN') && !props.getProperty('ROSTER_GITHUB_TOKEN')) {
-    var token = ui.prompt('GitHub Token', 'Enter GitHub Personal Access Token:', ui.ButtonSet.OK_CANCEL);
+    var token = ui.prompt('GitHub Token', 'Enter your GitHub Personal Access Token:', ui.ButtonSet.OK_CANCEL);
     if (token.getSelectedButton() !== ui.Button.OK) return;
     props.setProperty('ROSTER_GITHUB_TOKEN', token.getResponseText().trim());
   }
-  props.setProperty('SHEET_ID', SpreadsheetApp.getActiveSpreadsheet().getId());
 
-  ui.alert('Setup complete! Will sync tab: "' + findRosterSheet().getName() + '". Run testRosterSync() to test.');
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss.getSheetByName(ROSTER_TAB)) {
+    ui.alert('Tab "' + ROSTER_TAB + '" not found.\n\nFound tabs: ' +
+      ss.getSheets().map(function(s) { return s.getName(); }).join(', '));
+    return;
+  }
+  ui.alert('Setup complete! Run testRosterSync() to verify.');
 }
 
-// Twice-daily, same cadence as the platform sync (10 AM + 10 PM PT)
+// -- TRIGGERS - 10 AM and 10 PM PT daily -------------------------------------
 function createRosterTriggers() {
-  deleteRosterTriggers();
+  deleteRosterTriggers_();
   ScriptApp.newTrigger('syncRosterToGitHub')
     .timeBased().everyDays(1).atHour(10).nearMinute(0)
     .inTimezone('America/Los_Angeles').create();
   ScriptApp.newTrigger('syncRosterToGitHub')
     .timeBased().everyDays(1).atHour(22).nearMinute(0)
     .inTimezone('America/Los_Angeles').create();
-  SpreadsheetApp.getUi().alert('Roster sync enabled: 10 AM + 10 PM PT');
-}
-
-function deleteRosterTriggers() {
-  ScriptApp.getProjectTriggers().forEach(function(t) {
-    if (t.getHandlerFunction() === 'syncRosterToGitHub') ScriptApp.deleteTrigger(t);
-  });
+  SpreadsheetApp.getUi().alert('Roster sync enabled: 10 AM PT + 10 PM PT');
 }
 
 function stopRosterSync() {
-  deleteRosterTriggers();
+  deleteRosterTriggers_();
   SpreadsheetApp.getUi().alert('Roster sync stopped');
 }
 
+function deleteRosterTriggers_() {
+  ScriptApp.getProjectTriggers().forEach(function(t) {
+    if (t.getHandlerFunction() === 'syncRosterToGitHub') {
+      ScriptApp.deleteTrigger(t);
+    }
+  });
+}
+
+// -- MENU --------------------------------------------------------------------
 function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu('ROSTER SYNC')
-    .addItem('Sync Roster Now', 'syncRosterToGitHub')
+    .addItem('Sync Now', 'syncRosterToGitHub')
     .addItem('First Time Setup', 'setupRosterSync')
     .addSeparator()
     .addItem('Twice Daily (10 AM + 10 PM PT)', 'createRosterTriggers')
