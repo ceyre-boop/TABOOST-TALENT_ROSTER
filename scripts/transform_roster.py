@@ -23,15 +23,21 @@ def col(name):
     sys.exit(f"Column containing '{name}' not found in sheet header: {header}")
 
 i_name, i_handle, i_level = col("full name"), col("tiktok account"), col("sales level")
+i_cat, i_rate = col("category"), col("rate")
 
-out = [["Full Name", "TikTok Handle", "", "", "", "", "Sales Level"]]
+out = [["Full Name", "TikTok Handle", "Categories", "Rate", "", "", "Sales Level"]]
+seen = set()
 for r in rows[1:]:
-    if len(r) <= max(i_name, i_handle, i_level):
+    if len(r) <= max(i_name, i_handle, i_level, i_cat, i_rate):
         continue
     name, handle, level = r[i_name].strip(), r[i_handle].strip(), r[i_level].strip()
-    if not name or not handle or not level or level.upper() == "N/A":
+    cats, rate = r[i_cat].strip(), r[i_rate].strip()
+    if not name or not handle or handle.lower() in seen:
         continue
-    out.append([name, handle, "", "", "", "", level])
+    seen.add(handle.lower())
+    if level.upper() == "N/A":
+        level = ""
+    out.append([name, handle, cats, rate, "", "", level])
 
 with open("data/roster.csv", "w", newline="") as f:
     csv.writer(f).writerows(out)
