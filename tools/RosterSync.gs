@@ -9,17 +9,21 @@
 var ROSTER_TAB = 'Roster';
 var ROSTER_OUTPUT_PATH = 'data/roster.csv';
 
-// If this script is NOT bound to the spreadsheet (standalone project at
-// script.google.com), paste the spreadsheet ID here - it's the long string in
-// the sheet URL: docs.google.com/spreadsheets/d/<THIS_PART>/edit
-var SPREADSHEET_ID = '';
+// PASTE YOUR ROSTER SHEET LINK BETWEEN THE QUOTES BELOW.
+// Just copy the whole URL from your browser's address bar - the script
+// extracts the ID itself. Example:
+// var SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/1AbC.../edit#gid=0';
+var SPREADSHEET_URL = '';
 
 function getRosterSpreadsheet_() {
+  if (SPREADSHEET_URL) {
+    var m = SPREADSHEET_URL.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (!m) throw new Error('SPREADSHEET_URL does not look like a Google Sheets link');
+    return SpreadsheetApp.openById(m[1]);
+  }
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   if (ss) return ss;
-  if (SPREADSHEET_ID) return SpreadsheetApp.openById(SPREADSHEET_ID);
-  throw new Error('Not bound to a spreadsheet. Either paste this script via ' +
-    'Extensions > Apps Script inside the roster sheet, or set SPREADSHEET_ID at the top.');
+  throw new Error('Paste your roster sheet link into SPREADSHEET_URL at the top of the script.');
 }
 
 // -- MAIN SYNC ---------------------------------------------------------------
