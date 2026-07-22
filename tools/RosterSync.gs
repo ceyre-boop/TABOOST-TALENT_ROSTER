@@ -13,7 +13,7 @@ var ROSTER_OUTPUT_PATH = 'data/roster.csv';
 // Just copy the whole URL from your browser's address bar - the script
 // extracts the ID itself. Example:
 // var SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/1AbC.../edit#gid=0';
-var SPREADSHEET_URL = '';
+var SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/1Fl1yKACk6Wmqc9z8CCmgsgBv-zUEW9mqB-2UQvTCGOE/edit';
 
 function getRosterSpreadsheet_() {
   if (SPREADSHEET_URL) {
