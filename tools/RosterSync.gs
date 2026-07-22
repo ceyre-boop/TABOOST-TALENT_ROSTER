@@ -9,10 +9,23 @@
 var ROSTER_TAB = 'Roster';
 var ROSTER_OUTPUT_PATH = 'data/roster.csv';
 
+// If this script is NOT bound to the spreadsheet (standalone project at
+// script.google.com), paste the spreadsheet ID here - it's the long string in
+// the sheet URL: docs.google.com/spreadsheets/d/<THIS_PART>/edit
+var SPREADSHEET_ID = '';
+
+function getRosterSpreadsheet_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (ss) return ss;
+  if (SPREADSHEET_ID) return SpreadsheetApp.openById(SPREADSHEET_ID);
+  throw new Error('Not bound to a spreadsheet. Either paste this script via ' +
+    'Extensions > Apps Script inside the roster sheet, or set SPREADSHEET_ID at the top.');
+}
+
 // -- MAIN SYNC ---------------------------------------------------------------
 function syncRosterToGitHub() {
   var config = loadRosterConfig_();
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var ss = getRosterSpreadsheet_();
   var sheet = ss.getSheetByName(ROSTER_TAB);
   if (!sheet) {
     throw new Error('Tab "' + ROSTER_TAB + '" not found. Tabs in this spreadsheet: ' +
@@ -96,7 +109,7 @@ function loadRosterConfig_() {
     GITHUB_TOKEN: props.getProperty('ROSTER_GITHUB_TOKEN') || props.getProperty('GITHUB_TOKEN'),
     GITHUB_OWNER: 'ceyre-boop',
     GITHUB_REPO: 'TABOOST-TALENT_ROSTER',
-    SHEET_ID: SpreadsheetApp.getActiveSpreadsheet().getId()
+    SHEET_ID: getRosterSpreadsheet_().getId()
   };
 }
 
@@ -110,7 +123,7 @@ function setupRosterSync() {
     props.setProperty('ROSTER_GITHUB_TOKEN', token.getResponseText().trim());
   }
 
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var ss = getRosterSpreadsheet_();
   if (!ss.getSheetByName(ROSTER_TAB)) {
     ui.alert('Tab "' + ROSTER_TAB + '" not found.\n\nFound tabs: ' +
       ss.getSheets().map(function(s) { return s.getName(); }).join(', '));
