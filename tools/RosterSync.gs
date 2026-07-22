@@ -5,17 +5,19 @@
 // a badge on each creator box. Rows are matched by TikTok handle or name.
 // ============================================================================
 
-// Change this if your roster tab is named differently.
-const ROSTER_TAB = 'Roster';
+// If your roster tab has a specific name, put it here and it wins.
+// Leave as '' to auto-detect (tries the candidates, else uses the first tab).
+const ROSTER_TAB = '';
+const ROSTER_TAB_CANDIDATES = ['Roster', 'Current', 'Creators', 'Talent', 'Sheet1'];
 const ROSTER_OUTPUT_PATH = 'data/roster.csv';
 
 function syncRosterToGitHub() {
   const config = loadRosterConfig();
-  const gid = getRosterGid(ROSTER_TAB);
-  if (!gid) throw new Error(`Sheet "${ROSTER_TAB}" not found`);
+  const sheet = findRosterSheet();
+  console.log(`📊 Using tab: "${sheet.getName()}"`);
 
-  const csv = exportRosterCSV(config.SHEET_ID, gid);
-  console.log(`✅ Exported ${csv.length} chars from ${ROSTER_TAB}`);
+  const csv = exportRosterCSV(config.SHEET_ID, sheet.getSheetId().toString());
+  console.log(`✅ Exported ${csv.length} chars`);
 
   const result = pushRosterToGitHub(csv, config);
   console.log(`✅ Pushed to ${ROSTER_OUTPUT_PATH} @ ${result.commit.sha.substring(0, 7)}`);
@@ -23,6 +25,26 @@ function syncRosterToGitHub() {
 }
 
 function testRosterSync() { return syncRosterToGitHub(); }
+
+function findRosterSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (ROSTER_TAB) {
+    const s = ss.getSheetByName(ROSTER_TAB);
+    if (!s) throw new Error(`Sheet "${ROSTER_TAB}" not found. Tabs: ` +
+      ss.getSheets().map(x => x.getName()).join(', '));
+    return s;
+  }
+  for (const name of ROSTER_TAB_CANDIDATES) {
+    const s = ss.getSheetByName(name);
+    if (s) return s;
+  }
+  return ss.getSheets()[0];
+}
+
+function listTabs() {
+  SpreadsheetApp.getActiveSpreadsheet().getSheets()
+    .forEach(s => console.log(`"${s.getName()}"`));
+}
 
 function exportRosterCSV(sheetId, gid, retries = 3) {
   for (let i = 0; i < retries; i++) {
@@ -41,6 +63,7 @@ function exportRosterCSV(sheetId, gid, retries = 3) {
 
 function pushRosterToGitHub(content, config) {
   const { GITHUB_TOKEN, GITHUB_OWNER, GITHUB_REPO } = config;
+  if (!GITHUB_TOKEN) throw new Error('No GitHub token — run setupRosterSync() first');
   const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ROSTER_OUTPUT_PATH}`;
   const headers = {
     'Authorization': `token ${GITHUB_TOKEN}`,
@@ -52,7 +75,7 @@ function pushRosterToGitHub(content, config) {
   if (check.getResponseCode() === 200) sha = JSON.parse(check.getContentText()).sha;
 
   const payload = {
-    message: `Auto-sync: ${ROSTER_TAB} @ ${new Date().toISOString()}`,
+    message: `Auto-sync: roster @ ${new Date().toISOString()}`,
     content: Utilities.base64Encode(content),
     branch: 'main'
   };
@@ -70,11 +93,6 @@ function pushRosterToGitHub(content, config) {
     throw new Error(`GitHub error ${code}: ${upload.getContentText()}`);
   }
   return JSON.parse(upload.getContentText());
-}
-
-function getRosterGid(sheetName) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
-  return sheet ? sheet.getSheetId().toString() : null;
 }
 
 function loadRosterConfig() {
@@ -98,11 +116,7 @@ function setupRosterSync() {
   }
   props.setProperty('SHEET_ID', SpreadsheetApp.getActiveSpreadsheet().getId());
 
-  if (!getRosterGid(ROSTER_TAB)) {
-    ui.alert(`⚠️ Sheet "${ROSTER_TAB}" not found — edit ROSTER_TAB at the top of the script.`);
-    return;
-  }
-  ui.alert('✅ Roster sync setup complete! Run testRosterSync() to test.');
+  ui.alert(`✅ Setup complete! Will sync tab: "${findRosterSheet().getName()}". Run testRosterSync() to test.`);
 }
 
 // Twice-daily, same cadence as the platform sync (10 AM + 10 PM PT)
