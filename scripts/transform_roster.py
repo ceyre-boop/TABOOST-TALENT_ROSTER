@@ -17,6 +17,11 @@ rows = list(csv.reader(io.StringIO(raw)))
 header = [h.strip().lower() for h in rows[0]]
 
 def col(name):
+    # Exact match first ("tiktok account" must hit col I, never
+    # "additional tiktok accounts"), then substring fallback.
+    for i, h in enumerate(header):
+        if name == h:
+            return i
     for i, h in enumerate(header):
         if name in h:
             return i
