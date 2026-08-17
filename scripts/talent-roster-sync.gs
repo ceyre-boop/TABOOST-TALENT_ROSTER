@@ -132,44 +132,44 @@ function transformRoster_(csvText) {
   var iCat    = col('category');
   var iRate   = col('rate');
   var iLevel  = col('sales level');
-  var iExtra  = col('additional tiktok accounts');
 
   var out  = [['Full Name', 'TikTok Handle', 'Categories', 'Rate', '', '', 'Sales Level']];
   var seen = {};
   var maxIdx = Math.max(iName, iHandle, iCat, iRate, iLevel);
 
+  // ONE CARD PER SHEET ROW, keyed on the primary TikTok Account (col I).
+  // The "Additional TikTok Accounts" column (K/L) is deliberately NOT
+  // expanded into cards: publishing those took the roster from 95 to 110
+  // and broke parity with the sheet's row count, which is how the roster
+  // is reviewed. Their pictures are still cached under assets/avatars/ if
+  // that decision is ever revisited. Two rows (Samantha Jones,
+  // Anastasiya Raylyanu) reuse a handle from an earlier row and collapse
+  // into it, so 97 rows yields 95 cards.
   for (var k = 1; k < rows.length; k++) {
     var r = rows[k];
     if (r.length <= maxIdx) continue;
 
-    var name = String(r[iName] || '').trim();
-    if (!name) continue;                         // page would drop these anyway
+    var name   = String(r[iName]   || '').trim();
+    var handle = String(r[iHandle] || '').trim().replace(/^@/, '');
+    if (!name || !handle) continue;              // page would drop these anyway
+
+    var key = handle.toLowerCase();
+    if (seen[key]) continue;                     // one card per TikTok account
+    seen[key] = true;
 
     // Blank out N/A and spreadsheet error values so no "#ERROR!" filter chip
     // can ever reach the live page.
     var level = String(r[iLevel] || '').trim();
     if (level.toUpperCase() === 'N/A' || level.charAt(0) === '#') level = '';
 
-    var cat  = String(r[iCat]  || '').trim();
-    var rate = String(r[iRate] || '').trim();
-
-    // Main account first, then every secondary account, so a creator's cards
-    // sit next to each other on the page. Secondary handles spill past the
-    // "Additional TikTok Accounts" header into unnamed columns, so sweep to
-    // the end of the row rather than reading a single cell. Each secondary
-    // card inherits its parent's name, categories, rate and level.
-    var handles = [r[iHandle]].concat(r.slice(iExtra));
-
-    for (var x = 0; x < handles.length; x++) {
-      var handle = String(handles[x] || '').trim().replace(/^@/, '');
-      if (!handle) continue;
-
-      var key = handle.toLowerCase();
-      if (seen[key]) continue;                   // one card per TikTok account
-      seen[key] = true;
-
-      out.push([name, handle, cat, rate, '', '', level]);
-    }
+    out.push([
+      name,
+      handle,
+      String(r[iCat]  || '').trim(),
+      String(r[iRate] || '').trim(),
+      '', '',
+      level
+    ]);
   }
 
   var count = out.length - 1;
