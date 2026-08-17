@@ -34,10 +34,19 @@ print("missing:", [h for h in want if h not in have] or "none")
 PY
 ```
 
-## Known bad data
+## Secondary accounts
 
-`samjones_2` sits in Sam Jones's *Additional TikTok Accounts* cell but
-returns a not-found page on TikTok. It is excluded from the current
-`data/roster.csv`. The sync script does not know it is dead, so it will
-come back as an initials-only card on the next sync — remove it from the
-sheet to keep the two in step.
+The roster publishes **one card per sheet row**, keyed on the primary
+`TikTok Account` column. Secondary handles are deliberately not expanded
+into cards — doing so took the roster from 95 to 110 and broke parity
+with the sheet's row count, which is how the roster gets reviewed.
+
+Their pictures stay cached in `assets/avatars/` (`thisblondieee`,
+`shopaholicallee2`, `brittaniehammershop`, `hanasfaves`, `only_cups`,
+`only_supps`, `kategrs`, `honeyquiche`, `everydayaudur`, `peytonxshops`,
+`petitewithjessy`, `nataleezyyirl`, `kristinanicoletall`, `kindafitky`,
+`ashleyorganicedits`), so reinstating them is a data change only — no
+refetching needed.
+
+`samjones_2` was in the sheet but returns a not-found page on TikTok. It
+was removed from the sheet on 2026-08-17 and has no cached avatar.
