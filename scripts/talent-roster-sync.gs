@@ -11,6 +11,13 @@
 // handles (breaking every avatar) and silently discard every creator
 // who has no email on file. Do not "simplify" this by removing the
 // transform. Other tabs have no such contract and are pushed as-is.
+//
+// AVATARS: the page shows assets/avatars/<handle>.jpg and falls back to
+// unavatar.io only if that 404s. Treat the fallback as decorative — it
+// returns HTTP 429 under any burst, so a handle with no cached file will
+// usually render as bare initials. When a NEW handle is added to the
+// sheet, cache its picture into assets/avatars/ (see the notes in
+// scripts/README-avatars.md) rather than relying on the fallback.
 // ============================================================================
 
 // ── CONFIG ──────────────────────────────────────────────────────────────────
@@ -125,6 +132,7 @@ function transformRoster_(csvText) {
   var iCat    = col('category');
   var iRate   = col('rate');
   var iLevel  = col('sales level');
+  var iExtra  = col('additional tiktok accounts');
 
   var out  = [['Full Name', 'TikTok Handle', 'Categories', 'Rate', '', '', 'Sales Level']];
   var seen = {};
@@ -134,27 +142,34 @@ function transformRoster_(csvText) {
     var r = rows[k];
     if (r.length <= maxIdx) continue;
 
-    var name   = String(r[iName]   || '').trim();
-    var handle = String(r[iHandle] || '').trim().replace(/^@/, '');
-    if (!name || !handle) continue;              // page would drop these anyway
-
-    var key = handle.toLowerCase();
-    if (seen[key]) continue;                     // one card per TikTok account
-    seen[key] = true;
+    var name = String(r[iName] || '').trim();
+    if (!name) continue;                         // page would drop these anyway
 
     // Blank out N/A and spreadsheet error values so no "#ERROR!" filter chip
     // can ever reach the live page.
     var level = String(r[iLevel] || '').trim();
     if (level.toUpperCase() === 'N/A' || level.charAt(0) === '#') level = '';
 
-    out.push([
-      name,
-      handle,
-      String(r[iCat]  || '').trim(),
-      String(r[iRate] || '').trim(),
-      '', '',
-      level
-    ]);
+    var cat  = String(r[iCat]  || '').trim();
+    var rate = String(r[iRate] || '').trim();
+
+    // Main account first, then every secondary account, so a creator's cards
+    // sit next to each other on the page. Secondary handles spill past the
+    // "Additional TikTok Accounts" header into unnamed columns, so sweep to
+    // the end of the row rather than reading a single cell. Each secondary
+    // card inherits its parent's name, categories, rate and level.
+    var handles = [r[iHandle]].concat(r.slice(iExtra));
+
+    for (var x = 0; x < handles.length; x++) {
+      var handle = String(handles[x] || '').trim().replace(/^@/, '');
+      if (!handle) continue;
+
+      var key = handle.toLowerCase();
+      if (seen[key]) continue;                   // one card per TikTok account
+      seen[key] = true;
+
+      out.push([name, handle, cat, rate, '', '', level]);
+    }
   }
 
   var count = out.length - 1;
